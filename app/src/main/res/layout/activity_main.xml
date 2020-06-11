@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/text_velocity"
+        android:layout_width="126dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="36dp"
+        android:text="@string/velocity"
+        app:layout_constraintBottom_toTopOf="@+id/text_distance"
+        app:layout_constraintRight_toLeftOf="@+id/show_velocity"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text_distance"
+        android:layout_width="126dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="36dp"
+        android:text="@string/distance"
+        app:layout_constraintBottom_toTopOf="@+id/text_time"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/show_distance"
+        app:layout_constraintTop_toBottomOf="@+id/text_velocity" />
+
+    <TextView
+        android:id="@+id/text_time"
+        android:layout_width="126dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="36dp"
+        android:text="@string/time"
+        app:layout_constraintBottom_toTopOf="@+id/text_inclination"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_distance"
+        app:layout_constraintRight_toLeftOf="@+id/show_time"/>
+
+    <TextView
+        android:id="@+id/text_inclination"
+        android:layout_width="126dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="36dp"
+        android:text="@string/inclination"
+        app:layout_constraintTop_toBottomOf="@id/text_time"
+        app:layout_constraintBottom_toTopOf="@+id/stop_running"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/show_inclination" />
+
+    <TextView
+        android:id="@+id/show_velocity"
+        android:layout_width="126dp"
+        android:layout_height="43dp"
+        android:layout_marginEnd="52dp"
+        android:text="0 Km/h"
+        app:layout_constraintBottom_toTopOf="@+id/show_distance"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/text_velocity"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/show_distance"
+        android:layout_width="126dp"
+        android:layout_height="43dp"
+        android:layout_marginEnd="52dp"
+        android:text="0 m"
+        app:layout_constraintBottom_toTopOf="@+id/show_time"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/text_distance"
+        app:layout_constraintTop_toBottomOf="@+id/show_velocity" />
+
+    <Chronometer
+        android:id="@+id/show_time"
+        android:layout_width="126dp"
+        android:layout_height="43dp"
+        android:layout_marginEnd="52dp"
+        app:layout_constraintBottom_toTopOf="@+id/show_inclination"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/text_time"
+        app:layout_constraintTop_toBottomOf="@+id/show_distance" />
+
+    <TextView
+        android:id="@+id/show_inclination"
+        android:layout_width="126dp"
+        android:layout_height="43dp"
+        android:layout_marginEnd="52dp"
+        android:text="@string/center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/text_inclination"
+        app:layout_constraintTop_toBottomOf="@+id/show_time"
+        app:layout_constraintBottom_toTopOf="@+id/start_running"/>
+
+    <Button
+        android:id="@+id/start_running"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="52dp"
+        android:text="@string/start_running"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/show_inclination"
+        app:layout_constraintBottom_toTopOf="@+id/wifi_config"
+        app:layout_constraintLeft_toRightOf="@id/stop_running"/>
+
+    <Button
+        android:id="@+id/wifi_config"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="52dp"
+        android:text="@string/wifi_settings"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/bluetooth_config"
+        app:layout_constraintTop_toBottomOf="@+id/start_running" />
+
+    <Button
+        android:id="@+id/stop_running"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:text="@string/stop_running"
+        app:layout_constraintBottom_toTopOf="@+id/bluetooth_config"
+        app:layout_constraintRight_toLeftOf="@+id/start_running"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_inclination" />
+
+    <Button
+        android:id="@+id/bluetooth_config"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:text="@string/bluetooth_settings"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/wifi_config"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/stop_running" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

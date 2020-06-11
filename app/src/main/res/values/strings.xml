@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">BikeBluetoothWifi</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="wifi_fragment_label">Wifi Fragment</string>
+    <string name="bluetooth_fragment_label">Bluetooth Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="bluetooth_settings">Bluetooth Setup</string>
+    <string name="wifi_settings">Wifi Setup</string>
+    <string name="search_bluetooth">Search Bluetooth</string>
+    <string name="list_bluetooth">List Bluetooth</string>
+    <string name="switch_text_bluetooth">Enable Bluetooth</string>
+    <string name="on_bluetooth">On</string>
+    <string name="off_bluetooth">Off</string>
+    <string name="bluetooth_done">Bluetooth Done</string>
+    <string name="velocity">Velocity</string>
+    <string name="distance">Distance</string>ç
+    <string name="time">Time</string>ç
+    <string name="inclination">Inclination</string>
+    <string name="center">Center</string>
+    <string name="right">Right</string>
+    <string name="left">Left</string>
+    <string name="start_running">Start Running</string>
+    <string name="back">Back</string>
+    <string name="ip_port">Ip and Port</string>
+    <string name="wifi_connect">Connect</string>
+    <string name="stop_running">Stop Running</string>
+</resources>

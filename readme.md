@@ -1,5 +1,4 @@
 ## Idea of App:
-===
 
 The idea of this app is read comming data from rolling base through bluetooth. And show this information in
 the main screen of the aplication. Also the app reads the phone orientation.
@@ -10,14 +9,12 @@ All this information is send through TCP connection (called Wifi in class app), 
     velocity  | Total Distance | Position
 
 ## Requierements:
-===
 
 Cell phone: Android 6.0 Marshmallow  or higher version.
 Wifi Connection.
 Bluetooth Connection.
 
 ## Class Eplanation:
-===
 
 Father package:
     com.example.bikebluetoothwifi

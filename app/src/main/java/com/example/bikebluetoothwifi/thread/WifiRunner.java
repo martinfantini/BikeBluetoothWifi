@@ -39,7 +39,7 @@ public class WifiRunner implements Runnable {
 
             //Enviamos el valor a traves del handler.
             msg = new Message();
-            msg.obj = "Connected to Wifi";
+            msg.obj = "Connected";
             msg.setTarget(WifiConnection.GetInstance().getHandeler());
             msg.sendToTarget();
 

@@ -39,3 +39,18 @@ Archivos:
 ### thread
     BluetoothRunner.java : class is a runner (thread) implemetation to listen input data stream from bluetooth.
     WifiRunner.java : class is a runner (thread) implemetation to listen/send data stream through tcp connection.
+
+## App Screen:
+
+### Main app screen:
+![MainScreen](./pictures/main_screen.png)
+
+### Bluetooth screen:
+![BluetoothScreen](./pictures/bluetooth_screen.png)
+
+### Wifi screen:
+![WifiScreen](./pictures/wifi_screen.png)
+
+To run this app, you have to connect first Bluetooth, through Bluetooth screen. After that you have to establish 
+Wifi communication, through Bluetooth screen. And finally, you can press Start Running in the main screen and start
+training.

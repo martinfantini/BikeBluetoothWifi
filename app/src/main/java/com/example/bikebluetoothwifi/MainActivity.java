@@ -111,16 +111,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(v.getContext().getApplicationContext(),"Bluetooth is not connected",Toast.LENGTH_LONG).show();
                         return;
                     }
-                    //indication that the module is runing
-                    isRunning=true;
-
-                    //Start Thread to read data from Bluetooth
-                    chrTime.start();
-                    lastReadTime = System.currentTimeMillis();
-                    if(bluetoothThread!=null) {
-                        bluetoothThread = new Thread(new BluetoothRunner(localHandler));
-                    }
-                    bluetoothThread.start();
+                    StartRunning();
                 }
             }
         });
@@ -128,15 +119,7 @@ public class MainActivity extends AppCompatActivity {
         stopBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isRunning) {
-                    isRunning = false;
-                    textVelocity.setText("0 Km/h");
-                    textDistance.setText("0 m");
-                    textInclination.setText("Center 0");
-                    chrTime.stop();
-                    bluetoothThread.interrupt();
-                    WifiConnection.GetInstance().getWifiRunnerThread().interrupt();
-                }
+                StopRunning();
             }
         });
 
@@ -160,7 +143,30 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage (@NonNull Message msg){
             //nothing to do now
             String wifiData = (String) msg.obj;
-            Toast.makeText(MainActivity.this, wifiData, Toast.LENGTH_LONG).show();
+            if(wifiData.isEmpty())
+                return;
+
+            if(wifiData.equals("Connected")) {
+                Toast.makeText(MainActivity.this, "Wifi is connected", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            if(wifiData.equals("Start") && !isRunning)
+            {
+                if (!BluetoothConnection.GetInstance().IsBluetoothConnected()){
+                    Toast.makeText(MainActivity.this.getApplicationContext(),"Bluetooth is not connected",Toast.LENGTH_LONG).show();
+                    return;
+                }
+                StartRunning();
+                return;
+            }
+
+            if(wifiData.equals("Stop"))
+            {
+                Toast.makeText(MainActivity.this.getApplicationContext(),"Wifi Stop Running",Toast.LENGTH_LONG).show();
+                StopRunning();
+                return;
+            }
         }
     };
 
@@ -217,4 +223,34 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    private void StartRunning() {
+        if(!isRunning) {
+            //indication that the module is runing
+            isRunning = true;
+
+            //Start Thread to read data from Bluetooth
+            chrTime.start();
+            lastReadTime = System.currentTimeMillis();
+            if (bluetoothThread != null) {
+                bluetoothThread = new Thread(new BluetoothRunner(localHandler));
+            }
+            bluetoothThread.start();
+        }
+    }
+
+    private void StopRunning()
+    {
+        if(isRunning) {
+            isRunning = false;
+            textVelocity.setText("0 Km/h");
+            textDistance.setText("0 m");
+            textInclination.setText("Center 0");
+            chrTime.stop();
+            bluetoothThread.interrupt();
+            WifiConnection.GetInstance().getWifiRunnerThread().interrupt();
+        }
+    }
+
+
 }

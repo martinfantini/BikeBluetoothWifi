@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage (@NonNull Message msg){
             //nothing to do now
             String wifiData = (String) msg.obj;
-            if (wifiData.isEmpty())
+            if (wifiData==null || wifiData.isEmpty())
                 return;
 
             if (wifiData.equals("Connected")) {
@@ -171,9 +171,12 @@ public class MainActivity extends AppCompatActivity {
     private Handler localHandler = new Handler() {
         @Override
         public void handleMessage(@NonNull Message msg) {
+            if (!isRunning)
+                return;
+
             String brdData = (String)msg.obj;
 
-            if(brdData.isEmpty())
+            if (brdData==null || brdData.isEmpty())
                 return;
             if(brdData.startsWith("A"))
                 brdData = brdData.substring(1);
@@ -232,8 +235,11 @@ public class MainActivity extends AppCompatActivity {
             lastReadTime = System.currentTimeMillis();
             if (bluetoothThread == null) {
                 bluetoothThread = new Thread(new BluetoothRunner(localHandler));
+                bluetoothThread.start();
             }
-            bluetoothThread.start();
+            //if(!bluetoothThread.isAlive() || bluetoothThread.getState() )
+            //if( bluetoothThread.getState() != Thread.State.NEW )
+            //    bluetoothThread.start();
         }
     }
 
@@ -245,8 +251,8 @@ public class MainActivity extends AppCompatActivity {
             textDistance.setText("0 m");
             textInclination.setText("Center 0");
             chrTime.stop();
-            bluetoothThread.interrupt();
-            WifiConnection.GetInstance().getWifiRunnerThread().interrupt();
+            //if(bluetoothThread.isAlive())
+            //bluetoothThread.interrupt();
         }
     }
 

@@ -46,14 +46,15 @@ public class WifiRunner implements Runnable {
             //in this while the client listens for the messages sent by the server
             while (!Thread.currentThread().isInterrupted()) {
                 serverMessage = in.readLine();
-
-                //Enviamos el valor a traves del handler.
-                msg = new Message();
-                msg.obj = serverMessage;
-                msg.setTarget(WifiConnection.GetInstance().getHandeler());
-                msg.sendToTarget();
-
-                serverMessage = null;
+                if(serverMessage != null) {
+                    final String data = new String(serverMessage);
+                    //Enviamos el valor a traves del handler.
+                    msg = new Message();
+                    msg.obj = data;
+                    msg.setTarget(WifiConnection.GetInstance().getHandeler());
+                    msg.sendToTarget();
+                    serverMessage = null;
+                }
             }
         } catch (UnknownHostException e) {
             WifiConnection.GetInstance().sendMessage(e.toString());

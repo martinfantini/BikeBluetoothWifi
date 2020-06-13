@@ -143,15 +143,14 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage (@NonNull Message msg){
             //nothing to do now
             String wifiData = (String) msg.obj;
-            if(wifiData.isEmpty())
+            if (wifiData.isEmpty())
                 return;
 
-            if(wifiData.equals("Connected")) {
+            if (wifiData.equals("Connected")) {
                 Toast.makeText(MainActivity.this, "Wifi is connected", Toast.LENGTH_LONG).show();
                 return;
             }
-
-            if(wifiData.equals("Start") && !isRunning)
+            else if (wifiData.equals("Start") && !isRunning)
             {
                 if (!BluetoothConnection.GetInstance().IsBluetoothConnected()){
                     Toast.makeText(MainActivity.this.getApplicationContext(),"Bluetooth is not connected",Toast.LENGTH_LONG).show();
@@ -160,8 +159,7 @@ public class MainActivity extends AppCompatActivity {
                 StartRunning();
                 return;
             }
-
-            if(wifiData.equals("Stop"))
+            else if (wifiData.equals("Stop"))
             {
                 Toast.makeText(MainActivity.this.getApplicationContext(),"Wifi Stop Running",Toast.LENGTH_LONG).show();
                 StopRunning();
@@ -232,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
             //Start Thread to read data from Bluetooth
             chrTime.start();
             lastReadTime = System.currentTimeMillis();
-            if (bluetoothThread != null) {
+            if (bluetoothThread == null) {
                 bluetoothThread = new Thread(new BluetoothRunner(localHandler));
             }
             bluetoothThread.start();

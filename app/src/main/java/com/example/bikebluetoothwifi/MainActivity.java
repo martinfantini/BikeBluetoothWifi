@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
 
     private Button startBtn;
     private Button stopBtn;
+    private Button wifiConfig;
+    private Button blueConfig;
 
     private boolean isRunning = false;
 
@@ -55,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
     //To register movement sensors
     private SensorManager mSensorManager;
     private Sensor mRotationSensor;
-    private static final int SENSOR_DELAY = 5000; // 5ms
     private Integer position = 0;
 
     @Override
@@ -78,9 +79,15 @@ public class MainActivity extends AppCompatActivity {
         textInclination = (TextView) findViewById(R.id.show_inclination);
 
         startBtn = (Button) findViewById(R.id.start_running);
-        stopBtn = (Button) findViewById(R.id.stop_running);
+        if(WifiConnection.GetInstance().IsWifiConnected())
+            startBtn.setEnabled(true);
 
-        findViewById(R.id.bluetooth_config).setOnClickListener(new View.OnClickListener() {
+        stopBtn = (Button) findViewById(R.id.stop_running);
+        if(isRunning)
+            stopBtn.setEnabled(true);
+
+        blueConfig = (Button) findViewById(R.id.bluetooth_config);
+        blueConfig.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent k = new Intent(MainActivity.this, BluetoothActivity.class);
@@ -89,7 +96,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.wifi_config).setOnClickListener(new View.OnClickListener() {
+        wifiConfig = (Button) findViewById(R.id.wifi_config);
+        wifiConfig.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent k = new Intent(MainActivity.this, WifiActivity.class);
@@ -98,19 +106,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        if (BluetoothConnection.GetInstance().IsBluetoothConnected())
+            wifiConfig.setEnabled(true);
+
+
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if (!BluetoothConnection.GetInstance().IsBluetoothConnected()){
+                    Toast.makeText(v.getContext().getApplicationContext(),"Bluetooth is not connected",Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 if(!isRunning){
                     if (!WifiConnection.GetInstance().IsWifiConnected()){
                         Toast.makeText(v.getContext().getApplicationContext(),"Wifi is not connected",Toast.LENGTH_LONG).show();
                         return;
                     }
 
-                    if (!BluetoothConnection.GetInstance().IsBluetoothConnected()){
-                        Toast.makeText(v.getContext().getApplicationContext(),"Bluetooth is not connected",Toast.LENGTH_LONG).show();
-                        return;
-                    }
                     StartRunning();
                 }
             }
@@ -126,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             mSensorManager = (SensorManager) getSystemService(MainActivity.SENSOR_SERVICE);
             mRotationSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-            mSensorManager.registerListener(mSensorEventListener, mRotationSensor, SENSOR_DELAY);
+            mSensorManager.registerListener(mSensorEventListener, mRotationSensor, SensorManager.SENSOR_DELAY_GAME);
         } catch (Exception e) {
             Toast.makeText(this, "Hardware compatibility issue", Toast.LENGTH_LONG).show();
         }
@@ -237,6 +251,7 @@ public class MainActivity extends AppCompatActivity {
                 bluetoothThread = new Thread(new BluetoothRunner(localHandler));
                 bluetoothThread.start();
             }
+            stopBtn.setEnabled(true);
             //if(!bluetoothThread.isAlive() || bluetoothThread.getState() )
             //if( bluetoothThread.getState() != Thread.State.NEW )
             //    bluetoothThread.start();
@@ -251,6 +266,7 @@ public class MainActivity extends AppCompatActivity {
             textDistance.setText("0 m");
             textInclination.setText("Center 0");
             chrTime.stop();
+            stopBtn.setEnabled(false);
             //if(bluetoothThread.isAlive())
             //bluetoothThread.interrupt();
         }

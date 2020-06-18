@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 
 public class WifiActivity  extends AppCompatActivity {
 
-    private String strIp = "192.168.1.47";
+    private String strIp = "192.168.1.39";
     private String strPort = "10000";
 
     private String regExIpPort = "(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}):(\\d{1,5})";

@@ -81,7 +81,7 @@
 
     <ListView
         android:id="@+id/devices_found"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_centerHorizontal="true"
         android:background="@android:color/transparent"

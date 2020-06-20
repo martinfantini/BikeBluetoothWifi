@@ -142,7 +142,9 @@ public class BluetoothActivity  extends AppCompatActivity {
                         BluetoothConnection.GetInstance().SetInputStream(mmSocket.getInputStream());
                         BluetoothConnection.GetInstance().SetOutputStream(mmSocket.getOutputStream());
                         Toast.makeText(getApplicationContext(), "Bluetooth connected",Toast.LENGTH_SHORT).show();
+                        ChangeActivity();
                     } catch (IOException e1) {
+                        Toast.makeText(getApplicationContext(), "Bluetooth NOT connected, try again",Toast.LENGTH_SHORT).show();
                         // TODO Auto-generated catch block
                         e1.printStackTrace();
                     }
@@ -154,12 +156,17 @@ public class BluetoothActivity  extends AppCompatActivity {
         findViewById(R.id.bluetooth_main_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent k = new Intent(BluetoothActivity.this, MainActivity.class);
-                startActivity(k);
-                finish();
+                ChangeActivity();
             }
         });
     }
+    private void ChangeActivity()
+    {
+        Intent k = new Intent(BluetoothActivity.this, MainActivity.class);
+        startActivity(k);
+        finish();
+    }
+
 
     BroadcastReceiver bReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {

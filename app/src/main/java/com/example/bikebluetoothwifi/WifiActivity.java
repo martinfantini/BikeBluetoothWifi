@@ -45,6 +45,8 @@ public class WifiActivity  extends AppCompatActivity {
 
                         WifiConnection.GetInstance().setWifiRunnerThread( new Thread( new WifiRunner()));
                             WifiConnection.GetInstance().getWifiRunnerThread().start();
+
+                        ChangeActivity();
                     }
                     else {
                         Toast.makeText(v.getContext().getApplicationContext(),"Ip:Port test is empty",Toast.LENGTH_LONG).show();
@@ -54,10 +56,15 @@ public class WifiActivity  extends AppCompatActivity {
         findViewById(R.id.wifi_main_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent k = new Intent(WifiActivity.this, MainActivity.class);
-                startActivity(k);
-                finish();
+                ChangeActivity();
             }
         });
+    }
+
+    private void ChangeActivity()
+    {
+        Intent k = new Intent(WifiActivity.this, MainActivity.class);
+        startActivity(k);
+        finish();
     }
 }

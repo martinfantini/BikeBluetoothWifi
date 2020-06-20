@@ -23,6 +23,8 @@ import com.example.bikebluetoothwifi.general.DataCalculate;
 import com.example.bikebluetoothwifi.io.BluetoothConnection;
 import com.example.bikebluetoothwifi.io.WifiConnection;
 import com.example.bikebluetoothwifi.thread.BluetoothRunner;
+import com.example.bikebluetoothwifi.thread.PositionRunner;
+import com.example.bikebluetoothwifi.thread.SendDataRunner;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -40,25 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private Button wifiConfig;
     private Button blueConfig;
 
-    private boolean isRunning = false;
-
-    // Thread to read data from bluetooth;
-    Thread bluetoothThread = null;
-
-    private Double totalTrackDistance = new Double(0.0);
-
-    private long lastReadTime;
-
-    //To register movement sensors
-    private SensorManager mSensorManager =  null;
-    private Sensor mRotationSensor;
-    private Integer position = 0;
-
-    //Set Middle position
-    private Integer middlePos;
-    private boolean calcMiddlePos = false;
-
-    private static final int MOVEMENT_SENSOR_DELAY = 300;
+    private Thread SendDataThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
         textVelocity = (TextView) findViewById(R.id.show_velocity);
         textDistance = (TextView) findViewById(R.id.show_distance);
         chrTime = (Chronometer) findViewById(R.id.show_time);
-            // chrTime.setFormat("HH:MM:SS");
         chrTime.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
             @Override
             public void onChronometerTick(Chronometer chronometer) {
@@ -80,11 +63,11 @@ public class MainActivity extends AppCompatActivity {
         textInclination = (TextView) findViewById(R.id.show_inclination);
 
         startBtn = (Button) findViewById(R.id.start_running);
-        /*if(WifiConnection.GetInstance().IsWifiConnected() && !isRunning)*/
+        if(WifiConnection.GetInstance().IsWifiConnected() && !AplicationState.GetInstance().GetIsRunning())
             startBtn.setEnabled(true);
 
         stopBtn = (Button) findViewById(R.id.stop_running);
-        if(isRunning)
+        if(AplicationState.GetInstance().GetIsRunning())
             stopBtn.setEnabled(true);
 
         blueConfig = (Button) findViewById(R.id.bluetooth_config);
@@ -114,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!isRunning){
+                if(!AplicationState.GetInstance().GetIsRunning()){
                     if (!BluetoothConnection.GetInstance().IsBluetoothConnected()){
                         Toast.makeText(v.getContext().getApplicationContext(),"Bluetooth is not connected",Toast.LENGTH_LONG).show();
                         return;
@@ -138,12 +121,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private long miliSecondsElapsedTime() {
-        long elapsedSeconds= System.currentTimeMillis()-lastReadTime;
-        lastReadTime = System.currentTimeMillis();
-        return elapsedSeconds;
-    }
-
     private Handler wifiHandler = new Handler() {
         @Override
         public void handleMessage (@NonNull Message msg){
@@ -156,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Wifi is connected", Toast.LENGTH_LONG).show();
                 return;
             }
-            else if (wifiData.equals("Start") && !isRunning)
+            else if (wifiData.equals("Start") && !AplicationState.GetInstance().GetIsRunning())
             {
                 Toast.makeText(MainActivity.this.getApplicationContext(), "Wifi Start Running", Toast.LENGTH_LONG).show();
 
@@ -167,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
                 StartRunning();
                 return;
             }
-            else if (wifiData.equals("Stop") && isRunning)
+            else if (wifiData.equals("Stop") && AplicationState.GetInstance().GetIsRunning())
             {
                 Toast.makeText(MainActivity.this.getApplicationContext(),"Wifi Stop Running",Toast.LENGTH_LONG).show();
                 StopRunning();
@@ -176,124 +153,56 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private Handler localHandler = new Handler() {
+    private Handler dataHandler = new Handler() {
         @Override
-        public void handleMessage(@NonNull Message msg) {
-            if (!isRunning)
+        public void handleMessage (@NonNull Message msg) {
+            //nothing to do now
+            String baseData =(String) msg.obj;
+
+            if (baseData == null || baseData.isEmpty() )
                 return;
 
-            String brdData = (String)msg.obj;
-
-            if (brdData==null || brdData.isEmpty())
+            String[] array_datos = new String(baseData).split("\\|");
+            if (array_datos.length != 3)
                 return;
-            if(brdData.startsWith("A"))
-                brdData = brdData.substring(1);
-            Integer brdDatoInt;
-            try{
-                brdDatoInt = Integer.parseInt(brdData);
-            }catch (final NumberFormatException e) {
-                return;
-            }
 
-            DataCalculate brdDataFinal = new DataCalculate(brdDatoInt);
-            totalTrackDistance+=brdDataFinal.GetDistance();
-
-            //Show data
-            String strDistance = String.format("%.2f", totalTrackDistance);
-            textDistance.setText( strDistance + " m");
-            String velocity = brdDataFinal.CalculateVelocity(miliSecondsElapsedTime());
-            textVelocity.setText( velocity + " Km/h");
-
-            if( Math.abs(position) < 5 )
-                textInclination.setText("Center X: " + position );
-            else
-            {
-                textInclination.setText( (Math.signum(position)==1?"Right":"Left") + " X: " + position );
-            }
-
-            WifiConnection.GetInstance().sendMessage( velocity.replace(',','.') + "|" + strDistance.replace(',','.') + "|" + position );
-        }
-    };
-
-    private SensorEventListener mSensorEventListener = new SensorEventListener() {
-        float[] orientation = new float[3];
-        float[] rMat = new float[9];
-
-        public void onAccuracyChanged( Sensor sensor, int accuracy ) {}
-
-        @Override
-        public void onSensorChanged( SensorEvent event ) {
-            if( event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR ){
-                // calculate th rotation matrix
-                SensorManager.getRotationMatrixFromVector( rMat, event.values );
-                SensorManager.getOrientation( rMat, orientation );
-
-                if(isRunning)
-                {
-                    position = (int) Math.toDegrees(orientation[0]) - middlePos;
-                    if(calcMiddlePos)
-                    {
-                        middlePos = position;
-                        calcMiddlePos = false;
-                        position = 0;
-                    }
-                }
-            }
+            textVelocity.setText(array_datos[0] + " Km/h");
+            textDistance.setText(array_datos[1] + " m");
+            textInclination.setText(array_datos[2]);
         }
     };
 
     private void StartRunning() {
-        if(!isRunning) {
-            if (mSensorManager == null)
-            {
-                try {
-                    mSensorManager = (SensorManager) getSystemService(MainActivity.SENSOR_SERVICE);
-                    mRotationSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-                    mSensorManager.registerListener(mSensorEventListener, mRotationSensor, MOVEMENT_SENSOR_DELAY);
-                } catch (Exception e) {
-                    Toast.makeText(this, "Hardware compatibility issue", Toast.LENGTH_LONG).show();
-                    return;
-                }
-            }
-            else
-            {
-                mSensorManager.registerListener(mSensorEventListener, mRotationSensor, MOVEMENT_SENSOR_DELAY);
-            }
+        if(!AplicationState.GetInstance().GetIsRunning()) {
 
             //indication that the module is runing
-            calcMiddlePos = isRunning = true;
-            middlePos = 0;
+            AplicationState.GetInstance().SetIsRunning(true);
+            AplicationState.GetInstance().SetMiddlePosition(true);
+
+            if (SendDataThread == null)
+            {
+                SendDataThread = new Thread(new SendDataRunner(dataHandler, this));
+                SendDataThread.start();
+            }
 
             //Start Thread to read data from Bluetooth
             chrTime.start();
-            lastReadTime = System.currentTimeMillis();
-            if (bluetoothThread == null)
-            {
-                bluetoothThread = new Thread(new BluetoothRunner(localHandler));
-                bluetoothThread.start();
-            }
             stopBtn.setEnabled(true);
         }
     }
 
     private void StopRunning()
     {
-        if(isRunning)
+        if(AplicationState.GetInstance().GetIsRunning())
         {
-            calcMiddlePos = isRunning = false;
+            //indication that the module is runing
+            AplicationState.GetInstance().SetIsRunning(false);
+            AplicationState.GetInstance().SetMiddlePosition(false);
+
             textVelocity.setText("0 Km/h");
-            textInclination.setText("Center 0");
+            textInclination.setText("0");
             chrTime.stop();
             stopBtn.setEnabled(false);
-            if(mSensorManager != null)
-                mSensorManager.unregisterListener(mSensorEventListener);
         }
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-    }
-
 }

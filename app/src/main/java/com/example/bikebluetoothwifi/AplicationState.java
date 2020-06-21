@@ -7,7 +7,6 @@ public class AplicationState {
     private boolean isRunning = false;
     private boolean calculateMiddlePosition = false;
     private boolean hasTcpConnection = false;
-    private Context mainContext;
 
     private static AplicationState AplicationStateInstance = null;
 

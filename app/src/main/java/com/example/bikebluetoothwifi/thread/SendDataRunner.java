@@ -26,7 +26,6 @@ public class SendDataRunner implements Runnable {
 
     //Set Middle positio
     private Integer middlePos = 0;
-    private boolean calcMiddlePos = false;
     private Integer brd_position = 0;
 
     public SendDataRunner(Handler handler, Context context)
@@ -53,6 +52,14 @@ public class SendDataRunner implements Runnable {
 
             //Primera lectura
             lastReadTime = System.currentTimeMillis();
+            //when it is stoped, it has
+            if(!AplicationState.GetInstance().GetIsRunning())
+            {
+                middlePos = 0;
+                brd_position = 0;
+                if(!AplicationState.GetInstance().GetMiddlePosition())
+                    AplicationState.GetInstance().SetMiddlePosition(true);
+            }
             while (AplicationState.GetInstance().GetIsRunning());
         }
     }

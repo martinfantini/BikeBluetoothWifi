@@ -8,6 +8,13 @@ and teh velocity of the roller.
 All this information is send through TCP connection (called Wifi in class app), the information is organiced:
     velocity  | Total Distance | Position
 
+## Diagrma of information flow
+
+Here is a small diagram, how the information flows from the base to the Android phone and 
+in the case to the pc game.
+
+![AplicationContext](./pictures/AplicationContext.png)
+
 ## Requierements:
 
 Cell phone: Android 6.0 Marshmallow  or higher version.
@@ -57,3 +64,15 @@ Father package: com.example.bikebluetoothwifi
 To run this app, you have to connect first Bluetooth, through Bluetooth screen. After that you have to establish 
 Wifi communication, through Bluetooth screen. And finally, you can press Start Running in the main screen and start
 training.
+
+## Working Modes
+
+This is a secuence diagram of working modes of the program.
+
+TcpConnection/Game Starting:
+After TcpConnection is completed, you can start running with the base.
+![GameStartedCase](./pictures/GameStartedCase.png)
+
+Aplication Starting:
+This starts from the aplication.
+![AndroidStartedCase](./pictures/AndroidStartedCase.png)

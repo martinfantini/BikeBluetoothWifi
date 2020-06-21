@@ -27,7 +27,8 @@ Carpetas:
 Archivos:
     BluetoothActivity.java :  Activity to configure bluetooth connection.
     MainActivity.java : Activity to show all app information.
-    WifiActivity.java : Activity to configure wifi connection. 
+    WifiActivity.java : Activity to configure wifi connection.
+    AplicationState.java : Singleton to centralize all information from the aplication.
 
 ### io
     BluetoothConnection.java : Singleton to manage all io-bluetooth information.
@@ -39,6 +40,9 @@ Archivos:
 ### thread
     BluetoothRunner.java : class is a runner (thread) implemetation to listen input data stream from bluetooth.
     WifiRunner.java : class is a runner (thread) implemetation to listen/send data stream through tcp connection.
+    SendDataRunner.java : class is a runner (thread) implemetation to recieve data from BluetoothRunner and PositionRunner, 
+                and send this data to the UI main thread and to the TCP/Wifi connection. (WifiConnection class)
+    PositionRunner.java :  class is a runner (thread) implemetation to listen cell phone position.
 
 ## App Screen:
 

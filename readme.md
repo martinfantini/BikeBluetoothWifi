@@ -31,7 +31,7 @@ Archivos:
     AplicationState.java : Singleton to centralize all information from the aplication.
 
 ### io
-    BluetoothConnection.java : Singleton to manage all io-bluetooth information.
+    BluetoothConnection.java : Singleton to manage all io-bluetooth information
     WifiConnection.java : Singletone to manage al TCP/Wifi connection.
 
 ### general

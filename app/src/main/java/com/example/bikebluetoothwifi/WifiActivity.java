@@ -45,7 +45,7 @@ public class WifiActivity  extends AppCompatActivity {
 
                         WifiConnection.GetInstance().setWifiRunnerThread( new Thread( new WifiRunner()));
                             WifiConnection.GetInstance().getWifiRunnerThread().start();
-
+                        AplicationState.GetInstance().SetHasTcpConnection(true);
                         ChangeActivity();
                     }
                     else {

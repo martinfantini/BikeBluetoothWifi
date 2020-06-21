@@ -63,12 +63,8 @@ public class MainActivity extends AppCompatActivity {
         textInclination = (TextView) findViewById(R.id.show_inclination);
 
         startBtn = (Button) findViewById(R.id.start_running);
-        if(WifiConnection.GetInstance().IsWifiConnected() && !AplicationState.GetInstance().GetIsRunning())
-            startBtn.setEnabled(true);
 
         stopBtn = (Button) findViewById(R.id.stop_running);
-        if(AplicationState.GetInstance().GetIsRunning())
-            stopBtn.setEnabled(true);
 
         blueConfig = (Button) findViewById(R.id.bluetooth_config);
         blueConfig.setOnClickListener(new View.OnClickListener() {
@@ -90,21 +86,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if (BluetoothConnection.GetInstance().IsBluetoothConnected())
-            wifiConfig.setEnabled(true);
-
-
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!AplicationState.GetInstance().GetIsRunning()){
+
                     if (!BluetoothConnection.GetInstance().IsBluetoothConnected()){
                         Toast.makeText(v.getContext().getApplicationContext(),"Bluetooth is not connected",Toast.LENGTH_LONG).show();
-                        return;
-                    }
-
-                    if (!WifiConnection.GetInstance().IsWifiConnected()){
-                        Toast.makeText(v.getContext().getApplicationContext(),"Wifi is not connected",Toast.LENGTH_LONG).show();
                         return;
                     }
 
@@ -116,9 +104,30 @@ public class MainActivity extends AppCompatActivity {
         stopBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 StopRunning();
+
+                if(AplicationState.GetInstance().GetHasTcpConnection())
+                {
+                    WifiConnection.GetInstance().sendMessage( "Pause" );
+                }
+                else
+                    wifiConfig.setEnabled(true);
             }
         });
+
+        if (BluetoothConnection.GetInstance().IsBluetoothConnected() )
+        {
+            blueConfig.setEnabled(false);
+
+            if(AplicationState.GetInstance().GetIsRunning() && !AplicationState.GetInstance().GetHasTcpConnection())
+                wifiConfig.setEnabled(false);
+            else if(!AplicationState.GetInstance().GetIsRunning())
+            {
+                startBtn.setEnabled(true);
+                wifiConfig.setEnabled(!AplicationState.GetInstance().GetHasTcpConnection());
+            }
+        }
     }
 
     private Handler wifiHandler = new Handler() {
@@ -136,11 +145,6 @@ public class MainActivity extends AppCompatActivity {
             else if (wifiData.equals("Start") && !AplicationState.GetInstance().GetIsRunning())
             {
                 Toast.makeText(MainActivity.this.getApplicationContext(), "Wifi Start Running", Toast.LENGTH_LONG).show();
-
-                if (!BluetoothConnection.GetInstance().IsBluetoothConnected()) {
-                    Toast.makeText(MainActivity.this.getApplicationContext(), "Bluetooth is not connected", Toast.LENGTH_LONG).show();
-                    return;
-                }
                 StartRunning();
                 return;
             }
@@ -187,7 +191,11 @@ public class MainActivity extends AppCompatActivity {
 
             //Start Thread to read data from Bluetooth
             chrTime.start();
+
             stopBtn.setEnabled(true);
+            startBtn.setEnabled(false);
+            wifiConfig.setEnabled(false);
+            blueConfig.setEnabled(false);
         }
     }
 
@@ -202,7 +210,11 @@ public class MainActivity extends AppCompatActivity {
             textVelocity.setText("0 Km/h");
             textInclination.setText("0");
             chrTime.stop();
+
             stopBtn.setEnabled(false);
+            startBtn.setEnabled(true);
+            wifiConfig.setEnabled(false);
+            blueConfig.setEnabled(false);
         }
     }
 }

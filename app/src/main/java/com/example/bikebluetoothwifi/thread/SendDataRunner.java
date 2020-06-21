@@ -89,7 +89,9 @@ public class SendDataRunner implements Runnable {
             String strDistance = String.format("%.2f", totalTrackDistance);
 
             String sendData = velocity.replace(',','.') + "|" + strDistance.replace(',','.') + "|" + brd_position.toString();
-            WifiConnection.GetInstance().sendMessage( sendData );
+
+            if(AplicationState.GetInstance().GetHasTcpConnection())
+                WifiConnection.GetInstance().sendMessage( sendData );
 
             //Enviamos el valor a traves del handler.
             Message msg_send = new Message();

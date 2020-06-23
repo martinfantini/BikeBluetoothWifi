@@ -125,11 +125,7 @@ public class SendDataRunner implements Runnable {
             }
             else
             {
-                if( middlePos == 180 || middlePos == -180)
-                {
-                    brd_position = middlePos - position;
-                }
-                else if (Integer.signum(middlePos)==Integer.signum(position))
+                if (Integer.signum(middlePos)==Integer.signum(position))
                 {
                     brd_position = position - middlePos;
                 }

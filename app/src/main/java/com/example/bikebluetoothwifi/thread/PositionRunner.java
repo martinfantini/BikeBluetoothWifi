@@ -22,7 +22,7 @@ public class PositionRunner implements Runnable {
     private SensorManager m_SensorManager;
     private Sensor m_RotationSensor;
 
-    private static final int MOVEMENT_SENSOR_DELAY = 300;
+    private static final int MOVEMENT_SENSOR_DELAY = 500;
 
 
     public PositionRunner(Handler handler,Context context)
@@ -35,7 +35,7 @@ public class PositionRunner implements Runnable {
     public void run() {
         try {
             m_SensorManager = (SensorManager) m_Context.getSystemService(SENSOR_SERVICE);
-            m_RotationSensor = m_SensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+            m_RotationSensor = m_SensorManager.getDefaultSensor(Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR);
         } catch (Exception e) {
             //Toast.makeText(m_Context, "Hardware compatibility issue", Toast.LENGTH_LONG).show();
             e.printStackTrace();
@@ -56,20 +56,17 @@ public class PositionRunner implements Runnable {
 
         @Override
         public void onSensorChanged( SensorEvent event ) {
-            if( event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR ){
+            if( event.sensor.getType() == Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR  && AplicationState.GetInstance().GetIsRunning() ){
                 // calculate th rotation matrix
                 SensorManager.getRotationMatrixFromVector( rMat, event.values );
                 SensorManager.getOrientation( rMat, orientation );
 
-                if(AplicationState.GetInstance().GetIsRunning())
-                {
-                    Integer position = (int) Math.toDegrees(orientation[0]);
-                    //Enviamos el valor a traves del handler.
-                    Message msg = new Message();
-                    msg.obj = position;
-                    msg.setTarget(m_Handler);
-                    msg.sendToTarget();
-                }
+                Integer position = (int) Math.toDegrees(orientation[0]);
+                //Enviamos el valor a traves del handler.
+                Message msg = new Message();
+                msg.obj = position;
+                msg.setTarget(m_Handler);
+                msg.sendToTarget();
             }
         }
     };

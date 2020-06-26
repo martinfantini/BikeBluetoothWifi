@@ -22,6 +22,7 @@
     <string name="time">Time</string>ç
     <string name="inclination">Inclination</string>
     <string name="center">Center</string>
+    <string name="measure">Measure</string>
     <string name="right">Right</string>
     <string name="left">Left</string>
     <string name="start_running">Start Running</string>

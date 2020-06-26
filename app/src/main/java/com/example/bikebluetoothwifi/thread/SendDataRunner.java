@@ -10,6 +10,8 @@ import com.example.bikebluetoothwifi.AplicationState;
 import com.example.bikebluetoothwifi.general.DataCalculate;
 import com.example.bikebluetoothwifi.io.WifiConnection;
 
+import java.lang.*;
+
 public class SendDataRunner implements Runnable {
 
     private Handler m_Handler;
@@ -27,6 +29,8 @@ public class SendDataRunner implements Runnable {
     //Set Middle positio
     private Integer middlePos = 0;
     private Integer brd_position = 0;
+    private Integer position_send = 0;
+
 
     public SendDataRunner(Handler handler, Context context)
     {
@@ -59,6 +63,10 @@ public class SendDataRunner implements Runnable {
                 brd_position = 0;
                 if(!AplicationState.GetInstance().GetMiddlePosition())
                     AplicationState.GetInstance().SetMiddlePosition(true);
+
+                //Borramos todos los mebsajes antes de volver a iniciar
+                //local_bluetooth_Handler.removeMessages(0);
+                //local_position_Handler.removeMessages(0);
             }
             while (AplicationState.GetInstance().GetIsRunning());
         }
@@ -102,7 +110,7 @@ public class SendDataRunner implements Runnable {
 
             //Enviamos el valor a traves del handler.
             Message msg_send = new Message();
-            msg_send.obj = new String(sendData);
+            msg_send.obj = new String(sendData + "|" + middlePos + "|" + position_send  );
             msg_send.setTarget(m_Handler);
             msg_send.sendToTarget();
         }
@@ -113,26 +121,28 @@ public class SendDataRunner implements Runnable {
         public void handleMessage(@NonNull Message msg) {
             if (!AplicationState.GetInstance().GetIsRunning())
                 return;
+
             Integer position = (Integer) msg.obj;
             if (position == null)
                 return;
-
+            position_send = position;
             if(AplicationState.GetInstance().GetMiddlePosition())
             {
                 middlePos = position;
                 AplicationState.GetInstance().SetMiddlePosition(false);
                 brd_position = 0;
             }
+            else if (Integer.signum(middlePos)==Integer.signum(position))
+            {
+                brd_position = position - middlePos;
+            }
+            else if (Math.abs(middlePos) < 90)
+            {
+                brd_position = position - middlePos;
+            }
             else
             {
-                if (Integer.signum(middlePos)==Integer.signum(position))
-                {
-                    brd_position = position - middlePos;
-                }
-                else
-                {
-                    brd_position = position + Integer.signum(middlePos) * 360 - middlePos;
-                }
+                brd_position = position + Integer.signum(middlePos) * 360 - middlePos;
             }
         }
     };

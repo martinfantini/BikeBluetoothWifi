@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView textDistance;
     private Chronometer chrTime;
     private TextView textInclination;
+    private TextView textCenter;
+    private TextView textMeasure;
 
     private Button startBtn;
     private Button stopBtn;
@@ -61,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         textInclination = (TextView) findViewById(R.id.show_inclination);
+        textCenter = (TextView) findViewById(R.id.show_center);
+        textMeasure  = (TextView) findViewById(R.id.show_measure);
 
         startBtn = (Button) findViewById(R.id.start_running);
 
@@ -167,12 +171,14 @@ public class MainActivity extends AppCompatActivity {
                 return;
 
             String[] array_datos = new String(baseData).split("\\|");
-            if (array_datos.length != 3)
+            if (array_datos.length != 5)
                 return;
 
             textVelocity.setText(array_datos[0] + " Km/h");
             textDistance.setText(array_datos[1] + " m");
             textInclination.setText(array_datos[2]);
+            textCenter.setText(array_datos[3]);
+            textMeasure.setText( array_datos[4]);
         }
     };
 

@@ -28,6 +28,7 @@ public class SendDataRunner implements Runnable {
 
     //Set Middle positio
     private Integer middlePos = 0;
+    private Integer firstFive = 0;
     private Integer brd_position = 0;
     private Integer position_send = 0;
 
@@ -62,8 +63,10 @@ public class SendDataRunner implements Runnable {
                 middlePos = 0;
                 brd_position = 0;
                 if(!AplicationState.GetInstance().GetMiddlePosition())
+                {
+                    firstFive = 0;
                     AplicationState.GetInstance().SetMiddlePosition(true);
-
+                }
                 //Borramos todos los mebsajes antes de volver a iniciar
                 //local_bluetooth_Handler.removeMessages(0);
                 //local_position_Handler.removeMessages(0);
@@ -126,11 +129,13 @@ public class SendDataRunner implements Runnable {
             if (position == null)
                 return;
             position_send = position;
-            if(AplicationState.GetInstance().GetMiddlePosition())
+            if(AplicationState.GetInstance().GetMiddlePosition() && firstFive <= 5)
             {
                 middlePos = position;
-                AplicationState.GetInstance().SetMiddlePosition(false);
+                if(firstFive == 5)
+                    AplicationState.GetInstance().SetMiddlePosition(false);
                 brd_position = 0;
+                firstFive++;
             }
             else if (Integer.signum(middlePos)==Integer.signum(position))
             {

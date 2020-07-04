@@ -34,10 +34,21 @@
         android:layout_height="43dp"
         android:layout_marginStart="36dp"
         android:text="@string/time"
-        app:layout_constraintBottom_toTopOf="@+id/text_inclination"
+        app:layout_constraintBottom_toTopOf="@+id/text_center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_distance"
         app:layout_constraintRight_toLeftOf="@+id/show_time"/>
+
+    <TextView
+        android:id="@+id/text_center"
+        android:layout_width="126dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="36dp"
+        android:text="@string/center"
+        app:layout_constraintTop_toBottomOf="@id/text_time"
+        app:layout_constraintBottom_toTopOf="@+id/text_inclination"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/show_center" />
 
     <TextView
         android:id="@+id/text_inclination"
@@ -45,10 +56,21 @@
         android:layout_height="43dp"
         android:layout_marginStart="36dp"
         android:text="@string/inclination"
-        app:layout_constraintTop_toBottomOf="@id/text_time"
-        app:layout_constraintBottom_toTopOf="@+id/stop_running"
+        app:layout_constraintTop_toBottomOf="@id/text_center"
+        app:layout_constraintBottom_toTopOf="@+id/text_measure"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/show_inclination" />
+
+    <TextView
+        android:id="@+id/text_measure"
+        android:layout_width="126dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="36dp"
+        android:text="@string/measure"
+        app:layout_constraintTop_toBottomOf="@id/text_inclination"
+        app:layout_constraintBottom_toTopOf="@+id/stop_running"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/show_measure" />
 
     <TextView
         android:id="@+id/show_velocity"
@@ -77,10 +99,21 @@
         android:layout_width="126dp"
         android:layout_height="43dp"
         android:layout_marginEnd="52dp"
-        app:layout_constraintBottom_toTopOf="@+id/show_inclination"
+        app:layout_constraintBottom_toTopOf="@+id/show_center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/text_time"
         app:layout_constraintTop_toBottomOf="@+id/show_distance" />
+
+    <TextView
+        android:id="@+id/show_center"
+        android:layout_width="126dp"
+        android:layout_height="43dp"
+        android:layout_marginEnd="52dp"
+        android:text="@string/center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/text_center"
+        app:layout_constraintTop_toBottomOf="@+id/show_time"
+        app:layout_constraintBottom_toTopOf="@+id/show_inclination"/>
 
     <TextView
         android:id="@+id/show_inclination"
@@ -90,7 +123,18 @@
         android:text="@string/center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/text_inclination"
-        app:layout_constraintTop_toBottomOf="@+id/show_time"
+        app:layout_constraintTop_toBottomOf="@+id/show_center"
+        app:layout_constraintBottom_toTopOf="@+id/show_measure"/>
+
+    <TextView
+        android:id="@+id/show_measure"
+        android:layout_width="126dp"
+        android:layout_height="43dp"
+        android:layout_marginEnd="52dp"
+        android:text="@string/center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/text_measure"
+        app:layout_constraintTop_toBottomOf="@+id/show_inclination"
         app:layout_constraintBottom_toTopOf="@+id/start_running"/>
 
     <Button
@@ -101,7 +145,7 @@
         android:text="@string/start_running"
         android:enabled="false"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/show_inclination"
+        app:layout_constraintTop_toBottomOf="@+id/show_measure"
         app:layout_constraintBottom_toTopOf="@+id/wifi_config"
         app:layout_constraintLeft_toRightOf="@id/stop_running"/>
 
@@ -127,7 +171,7 @@
         app:layout_constraintBottom_toTopOf="@+id/bluetooth_config"
         app:layout_constraintRight_toLeftOf="@+id/start_running"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_inclination" />
+        app:layout_constraintTop_toBottomOf="@+id/text_measure" />
 
     <Button
         android:id="@+id/bluetooth_config"

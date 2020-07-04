@@ -2,6 +2,7 @@ package com.example.bikebluetoothwifi.thread;
 
 import android.os.Message;
 
+import com.example.bikebluetoothwifi.AplicationState;
 import com.example.bikebluetoothwifi.io.BluetoothConnection;
 
 import java.io.IOException;
@@ -40,12 +41,14 @@ public class BluetoothRunner implements Runnable {
                             final String data = new String(encodedBytes, "US-ASCII");
                             readBufferPosition = 0;
 
-                            //Enviamos el valor a traves del handler.
-                            Message msg = new Message();
-                            msg.obj = data;
-                            msg.setTarget(mHandler);
-                            msg.sendToTarget();
-
+                            if (AplicationState.GetInstance().GetIsRunning())
+                            {
+                                //Enviamos el valor a traves del handler.
+                                Message msg = new Message();
+                                msg.obj = data;
+                                msg.setTarget(mHandler);
+                                msg.sendToTarget();
+                            }
                         } else {
                             readBuffer[readBufferPosition++] = b;
                         }

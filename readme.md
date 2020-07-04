@@ -8,6 +8,13 @@ and teh velocity of the roller.
 All this information is send through TCP connection (called Wifi in class app), the information is organiced:
     velocity  | Total Distance | Position
 
+## Diagrma of information flow
+
+Here is a small diagram, how the information flows from the base to the Android phone and 
+in the case to the pc game.
+
+![AplicationContext](./pictures/AplicationContext.png)
+
 ## Requierements:
 
 Cell phone: Android 6.0 Marshmallow  or higher version.
@@ -16,29 +23,32 @@ Bluetooth Connection.
 
 ## Class Eplanation:
 
-Father package:
-    com.example.bikebluetoothwifi
+Father package: com.example.bikebluetoothwifi
 
-Carpetas:
-    general : store general data
+### Carpetas:
+    general : store general data.
     io : stare classes to manage the io conections.
-    thread : store classes to manage threads
+    thread : store classes to manage threads.
 
-Archivos:
+#### Archivos:
     BluetoothActivity.java :  Activity to configure bluetooth connection.
     MainActivity.java : Activity to show all app information.
-    WifiActivity.java : Activity to configure wifi connection. 
+    WifiActivity.java : Activity to configure wifi connection.
+    AplicationState.java : Singleton to centralize all information from the aplication.
 
-### io
-    BluetoothConnection.java : Singleton to manage all io-bluetooth information.
+#### io
+    BluetoothConnection.java : Singleton to manage all io-bluetooth information
     WifiConnection.java : Singletone to manage al TCP/Wifi connection.
 
-### general
+#### general
     DataCalculate.java : Class to calculate data depending on roller size.
 
-### thread
+#### thread
     BluetoothRunner.java : class is a runner (thread) implemetation to listen input data stream from bluetooth.
     WifiRunner.java : class is a runner (thread) implemetation to listen/send data stream through tcp connection.
+    SendDataRunner.java : class is a runner (thread) implemetation to recieve data from BluetoothRunner and PositionRunner, 
+                and send this data to the UI main thread and to the TCP/Wifi connection. (WifiConnection class)
+    PositionRunner.java :  class is a runner (thread) implemetation to listen cell phone position.
 
 ## App Screen:
 
@@ -54,3 +64,15 @@ Archivos:
 To run this app, you have to connect first Bluetooth, through Bluetooth screen. After that you have to establish 
 Wifi communication, through Bluetooth screen. And finally, you can press Start Running in the main screen and start
 training.
+
+## Working Modes
+
+This is a secuence diagram of working modes of the program.
+
+TcpConnection/Game Starting:
+After TcpConnection is completed, you can start running with the base.
+![GameStartedCase](./pictures/GameStartedCase.png)
+
+Aplication Starting:
+This starts from the aplication.
+![AndroidStartedCase](./pictures/AndroidStartedCase.png)

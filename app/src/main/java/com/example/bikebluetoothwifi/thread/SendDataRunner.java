@@ -11,6 +11,8 @@ import com.example.bikebluetoothwifi.general.DataCalculate;
 import com.example.bikebluetoothwifi.io.WifiConnection;
 
 import java.lang.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class SendDataRunner implements Runnable {
 
@@ -24,6 +26,9 @@ public class SendDataRunner implements Runnable {
     Thread BluetoothThread = null;
     Thread PositionThread = null;
 
+    //Datos a enviar
+    private String strVelocity = new String("0");
+    private String strDistance = new String("0");
     private Double totalTrackDistance = new Double(0.0);
 
     //Set Middle positio
@@ -32,6 +37,9 @@ public class SendDataRunner implements Runnable {
     private Integer brd_position = 0;
     private Integer position_send = 0;
 
+    //Timer to send data trought tcp/wifi connection
+    Timer timerSendDataWifi =  null;
+    private Integer timeToSendInMili = 300;
 
     public SendDataRunner(Handler handler, Context context)
     {
@@ -67,11 +75,21 @@ public class SendDataRunner implements Runnable {
                     firstFive = 0;
                     AplicationState.GetInstance().SetMiddlePosition(true);
                 }
-                //Borramos todos los mebsajes antes de volver a iniciar
-                //local_bluetooth_Handler.removeMessages(0);
-                //local_position_Handler.removeMessages(0);
+                if( timerSendDataWifi != null)
+                {
+                    timerSendDataWifi.cancel();
+                    timerSendDataWifi.purge();
+                    timerSendDataWifi = null;
+                }
             }
-            while (AplicationState.GetInstance().GetIsRunning());
+            while (AplicationState.GetInstance().GetIsRunning())
+            {
+                if(timerSendDataWifi == null)
+                {
+                    timerSendDataWifi = new Timer();
+                    TimerSendDataToWifi(timeToSendInMili);
+                }
+            };
         }
     }
 
@@ -101,15 +119,12 @@ public class SendDataRunner implements Runnable {
             }
 
             DataCalculate brdDataFinal = new DataCalculate(brdDatoInt);
-            String velocity = brdDataFinal.CalculateVelocity(miliSecondsElapsedTime());
+
+            strVelocity = brdDataFinal.CalculateVelocity(miliSecondsElapsedTime()).replace(',','.');
             totalTrackDistance+=brdDataFinal.GetDistance();
+            strDistance = String.format("%.2f", totalTrackDistance).replace(',','.');
 
-            String strDistance = String.format("%.2f", totalTrackDistance);
-
-            String sendData = velocity.replace(',','.') + "|" + strDistance.replace(',','.') + "|" + brd_position.toString();
-
-            if(AplicationState.GetInstance().GetHasTcpConnection())
-                WifiConnection.GetInstance().sendMessage( sendData );
+            String sendData = strVelocity + "|" + strDistance + "|" + brd_position.toString();
 
             //Enviamos el valor a traves del handler.
             Message msg_send = new Message();
@@ -151,4 +166,29 @@ public class SendDataRunner implements Runnable {
             }
         }
     };
+
+    private void TimerSendDataToWifi(int miliSeconds)
+    {
+        timerSendDataWifi.schedule(
+                new TimerTask(){
+                    public void run(){
+                        if(AplicationState.GetInstance().GetIsRunning())
+                        {
+                            TimerSendDataToWifi(timeToSendInMili);
+
+                            String sendData = strVelocity + "|" + strDistance + "|" + brd_position.toString();
+
+                            if(AplicationState.GetInstance().GetHasTcpConnection())
+                                WifiConnection.GetInstance().sendMessage( sendData );
+                        }
+                        else if(timerSendDataWifi != null)
+                        {
+                            timerSendDataWifi.cancel();
+                            timerSendDataWifi.purge();
+                            timerSendDataWifi = null;
+                        }
+                    }
+                }, miliSeconds);
+    };
+
 }

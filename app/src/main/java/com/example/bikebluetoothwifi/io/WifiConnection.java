@@ -23,6 +23,8 @@ public class WifiConnection {
 
     private static WifiConnection WifiConnectionInstance = null;
 
+    private Handler wifiSendDataHandler;
+
     public static WifiConnection GetInstance()
     {
         if ( WifiConnectionInstance==null )
@@ -85,5 +87,15 @@ public class WifiConnection {
     public void setWifiRunnerThread(Thread wifiRunnerThread)
     {
         this.wifiRunnerThread = wifiRunnerThread;
+    }
+
+    public void SetWifiDataHandler(Handler dataHandler)
+    {
+        wifiSendDataHandler  = dataHandler;
+    }
+
+    public Handler GetWifiDataHandler()
+    {
+        return wifiSendDataHandler;
     }
 }

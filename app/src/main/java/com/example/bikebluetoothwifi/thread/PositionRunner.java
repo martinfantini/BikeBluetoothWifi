@@ -24,7 +24,7 @@ public class PositionRunner implements Runnable {
 
     //This timer is in microseconds
     //private static final int MOVEMENT_SENSOR_DELAY = 500;
-    private static final int MOVEMENT_SENSOR_DELAY = 100000;
+    private static final int MOVEMENT_SENSOR_DELAY = 500;
     public PositionRunner(Handler handler,Context context)
     {
         m_Handler = handler;

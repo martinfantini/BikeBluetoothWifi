@@ -27,6 +27,7 @@ public class SendDataRunner implements Runnable {
     // Thread to read data from bluetooth;
     Thread BluetoothThread = null;
     Thread PositionThread = null;
+    Thread WifiSendDataRunner = null;
 
     //Datos a enviar
     private String strVelocity = new String("0");
@@ -39,12 +40,11 @@ public class SendDataRunner implements Runnable {
     private Integer brd_position = 0;
     private Integer position_send = 0;
 
-    //Timer to send data trought tcp/wifi connection
-    Timer timerSendDataWifi =  null;
-    private Integer timeToSendInMili = 300;
 
     //Mutex para syncronizar la lectura escritura
     ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+
+    private Integer sendDato = 0;
 
     public SendDataRunner(Handler handler, Context context)
     {
@@ -68,6 +68,12 @@ public class SendDataRunner implements Runnable {
                 PositionThread.start();
             }
 
+            if (WifiSendDataRunner == null)
+            {
+                WifiSendDataRunner = new Thread(new WifiSendDataRunner());
+                WifiSendDataRunner.start();
+            }
+
             //Primera lectura
             lastReadTime = System.currentTimeMillis();
             //when it is stoped, it has
@@ -80,17 +86,6 @@ public class SendDataRunner implements Runnable {
                     firstFive = 0;
                     AplicationState.GetInstance().SetMiddlePosition(true);
                 }
-                if( timerSendDataWifi != null)
-                {
-                    timerSendDataWifi.cancel();
-                    timerSendDataWifi.purge();
-                    timerSendDataWifi = null;
-                }
-            }
-            else if(AplicationState.GetInstance().GetIsRunning() && timerSendDataWifi == null && AplicationState.GetInstance().GetHasTcpConnection())
-            {
-                timerSendDataWifi = new Timer();
-                TimerSendDataToWifi(timeToSendInMili);
             }
 
             while (AplicationState.GetInstance().GetIsRunning());
@@ -121,8 +116,6 @@ public class SendDataRunner implements Runnable {
             }catch (final NumberFormatException e) {
                 return;
             }
-            readWriteLock.writeLock().lock();
-
             DataCalculate brdDataFinal = new DataCalculate(brdDatoInt);
 
             strVelocity = brdDataFinal.CalculateVelocity(miliSecondsElapsedTime()).replace(',','.');
@@ -136,8 +129,6 @@ public class SendDataRunner implements Runnable {
             msg_send.obj = new String(sendData + "|" + middlePos + "|" + position_send  );
             msg_send.setTarget(m_Handler);
             msg_send.sendToTarget();
-
-            readWriteLock.writeLock().unlock();
         }
     };
 
@@ -150,9 +141,6 @@ public class SendDataRunner implements Runnable {
             Integer position = (Integer) msg.obj;
             if (position == null)
                 return;
-
-            readWriteLock.writeLock().lock();
-
             position_send = position;
             if(AplicationState.GetInstance().GetMiddlePosition() && firstFive <= 5)
             {
@@ -175,36 +163,14 @@ public class SendDataRunner implements Runnable {
                 brd_position = position + Integer.signum(middlePos) * 360 - middlePos;
             }
 
-            readWriteLock.writeLock().unlock();
+            sendDato++;
+            if (sendDato == 5 ) {
+                sendDato = 0;
+                Message msg_to_Wifi = new Message();
+                msg_to_Wifi.obj = strVelocity + "|" + strDistance + "|" + brd_position.toString();
+                msg_to_Wifi.setTarget(WifiConnection.GetInstance().GetWifiDataHandler());
+                msg_to_Wifi.sendToTarget();
+            }
         }
     };
-
-    private void TimerSendDataToWifi(int miliSeconds)
-    {
-        timerSendDataWifi.schedule(
-                new TimerTask(){
-                    public void run(){
-                        if(AplicationState.GetInstance().GetIsRunning())
-                        {
-                            TimerSendDataToWifi(timeToSendInMili);
-
-                            readWriteLock.readLock().lock();
-
-                            String sendData = strVelocity + "|" + strDistance + "|" + brd_position.toString();
-
-                            if(AplicationState.GetInstance().GetHasTcpConnection())
-                                WifiConnection.GetInstance().sendMessage( sendData );
-
-                            readWriteLock.readLock().unlock();
-                        }
-                        else if(timerSendDataWifi != null)
-                        {
-                            timerSendDataWifi.cancel();
-                            timerSendDataWifi.purge();
-                            timerSendDataWifi = null;
-                        }
-                    }
-                }, miliSeconds);
-    };
-
 }

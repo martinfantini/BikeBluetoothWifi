@@ -82,14 +82,13 @@ public class SendDataRunner implements Runnable {
                     timerSendDataWifi = null;
                 }
             }
-            while (AplicationState.GetInstance().GetIsRunning())
+            else if(AplicationState.GetInstance().GetIsRunning() && timerSendDataWifi == null && AplicationState.GetInstance().GetHasTcpConnection())
             {
-                if(timerSendDataWifi == null)
-                {
-                    timerSendDataWifi = new Timer();
-                    TimerSendDataToWifi(timeToSendInMili);
-                }
-            };
+                timerSendDataWifi = new Timer();
+                TimerSendDataToWifi(timeToSendInMili);
+            }
+
+            while (AplicationState.GetInstance().GetIsRunning());
         }
     }
 

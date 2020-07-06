@@ -23,8 +23,8 @@ public class PositionRunner implements Runnable {
     private Sensor m_RotationSensor;
 
     //This timer is in microseconds
-    private static final int MOVEMENT_SENSOR_DELAY = 500;
-
+    //private static final int MOVEMENT_SENSOR_DELAY = 500;
+    private static final int MOVEMENT_SENSOR_DELAY = 100000;
     public PositionRunner(Handler handler,Context context)
     {
         m_Handler = handler;

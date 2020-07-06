@@ -13,6 +13,8 @@ import com.example.bikebluetoothwifi.io.WifiConnection;
 import java.lang.*;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class SendDataRunner implements Runnable {
 
@@ -40,6 +42,9 @@ public class SendDataRunner implements Runnable {
     //Timer to send data trought tcp/wifi connection
     Timer timerSendDataWifi =  null;
     private Integer timeToSendInMili = 300;
+
+    //Mutex para syncronizar la lectura escritura
+    ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
     public SendDataRunner(Handler handler, Context context)
     {
@@ -116,6 +121,7 @@ public class SendDataRunner implements Runnable {
             }catch (final NumberFormatException e) {
                 return;
             }
+            readWriteLock.writeLock().lock();
 
             DataCalculate brdDataFinal = new DataCalculate(brdDatoInt);
 
@@ -130,6 +136,8 @@ public class SendDataRunner implements Runnable {
             msg_send.obj = new String(sendData + "|" + middlePos + "|" + position_send  );
             msg_send.setTarget(m_Handler);
             msg_send.sendToTarget();
+
+            readWriteLock.writeLock().unlock();
         }
     };
 
@@ -142,6 +150,9 @@ public class SendDataRunner implements Runnable {
             Integer position = (Integer) msg.obj;
             if (position == null)
                 return;
+
+            readWriteLock.writeLock().lock();
+
             position_send = position;
             if(AplicationState.GetInstance().GetMiddlePosition() && firstFive <= 5)
             {
@@ -163,6 +174,8 @@ public class SendDataRunner implements Runnable {
             {
                 brd_position = position + Integer.signum(middlePos) * 360 - middlePos;
             }
+
+            readWriteLock.writeLock().unlock();
         }
     };
 
@@ -175,10 +188,14 @@ public class SendDataRunner implements Runnable {
                         {
                             TimerSendDataToWifi(timeToSendInMili);
 
+                            readWriteLock.readLock().lock();
+
                             String sendData = strVelocity + "|" + strDistance + "|" + brd_position.toString();
 
                             if(AplicationState.GetInstance().GetHasTcpConnection())
                                 WifiConnection.GetInstance().sendMessage( sendData );
+
+                            readWriteLock.readLock().unlock();
                         }
                         else if(timerSendDataWifi != null)
                         {

@@ -1,0 +1,34 @@
+@startuml
+title Wifi/Game Start Case
+rnote over "Wifi Thread"
+ Send a command from Tcp Connection
+ to start rolling the game.
+endrnote
+"Wifi Thread" -> "Android UI Thread" : Wifi start Command.
+rnote over "Android UI Thread"
+ Recieve this start command 
+ and send start Command to 
+ the Send Inforamtion Thread.
+endrnote
+"Android UI Thread" -> "Send Inforamtion Thread" : Commando to start working.
+rnote over "Send Inforamtion Thread"
+ Start the two threas Bluetooth Thread
+ and Position Thread. and recieve this 
+ information and it sends to the wifi/tcp
+ communication thread.
+endrnote
+"Send Inforamtion Thread" <- "Bluetooth Thread" : Magnet Interruption Count
+"Send Inforamtion Thread" <- "Position Thread" : Relative position of the phone
+rnote over "Wifi Thread"
+ Send the phone position and
+ the velocity to the game
+ with TcpConection.
+endrnote
+"Send Inforamtion Thread" -> "Wifi Thread" : Send data of Phone Position and Roller Velocity.
+rnote over "Android UI Thread"
+ Shows the Phone Position and 
+ Roller Velocity inside 
+ the phone screen.
+endrnote
+"Send Inforamtion Thread" -> "Android UI Thread" : Send data of Phone Position and Roller Velocity.
+@enduml

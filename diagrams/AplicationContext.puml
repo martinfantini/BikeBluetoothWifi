@@ -1,0 +1,36 @@
+@startuml
+package "Roller Base" {
+  MagnetInterrptor - [RollerBase Component]
+}
+
+node "Android Phone" {
+  [Aplication Component]
+}
+
+cloud {
+  [PC Game]
+}
+
+note right of [RollerBase Component]
+  Count all interruptions from MagnetInterrptor.
+  Send Data from the Roller Base (MagnetInterrptor) 
+  to the Android Phone through the Bluetooth 
+  with a frecuence of 1ms.
+end note
+
+note right of [Aplication Component]
+  Apliation save data from the RollerBase and also add the 
+  relative position of the cell phone. With all this information
+  is send to the PC Game. With the same frecuence of interruption. 
+  The information is sended with this format:
+    velocty | total_distance | position of bicycle handlebar
+end note
+
+note right of [PC Game]
+   Read velocity and inclination from Tcp Cmmunication. Show this information
+   in the game wo the player.
+end note
+
+[RollerBase Component] --> [Aplication Component] : Bluetooth Comunication / Data: Count of magnet pass through senssor
+[Aplication Component] --> [PC Game] : TcpConnection / Data: velocty | total_distance | position of bicycle handlebar
+@enduml

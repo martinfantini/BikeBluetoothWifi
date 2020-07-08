@@ -44,7 +44,9 @@ public class SendDataRunner implements Runnable {
     //Mutex para syncronizar la lectura escritura
     ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
+    // Send data frecuence
     private Integer sendDato = 0;
+    private static Integer MAX_SAMPLES_BEFORE_SEND = 3; // 3 => ~20 HZ 5 => ~10HZ
 
     public SendDataRunner(Handler handler, Context context)
     {
@@ -164,7 +166,7 @@ public class SendDataRunner implements Runnable {
             }
 
             sendDato++;
-            if (sendDato == 5 ) {
+            if (sendDato == MAX_SAMPLES_BEFORE_SEND ) {   // 20 HZ
                 sendDato = 0;
                 Message msg_to_Wifi = new Message();
                 msg_to_Wifi.obj = strVelocity + "|" + strDistance + "|" + brd_position.toString();

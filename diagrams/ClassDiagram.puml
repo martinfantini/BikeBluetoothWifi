@@ -1,0 +1,79 @@
+@startuml
+title Class Diagram of Aplication
+interface AppCompatActivity  << android interface to views >>
+interface Runnable  << android interface to threads >>
+class MainActivity << extends from AppCompatActivity >>
+note top of MainActivity
+    This is the startup aplication activity. 
+end note
+class WifiActivity << extends from AppCompatActivity >>
+note top of WifiActivity
+    This is the wifi configuration activity. 
+end note
+class BluetoothActivity << extends from AppCompatActivity >>
+note top of BluetoothActivity
+    This is the Bluetooth configuration
+    activity. 
+end note
+class AplicationState << singletone with Application Info >>
+note top of AplicationState
+    This class holds all general aplication
+    configuration. 
+end note
+class BluetoothConnection << singletone with Bluetooth Info >>
+note top of BluetoothConnection
+    This class holds information of 
+    Bluetooth connection. 
+end note
+class WifiConnection << singletone with TCP Info >>
+note top of WifiConnection
+    This class holds information of 
+    TCP/Wifi connection. 
+end note
+class DataCalculate << helper class >>
+note top of DataCalculate
+    This is a helper class to calculate
+    the infomation of the roller base. 
+end note
+class BluetoothRunner << listener thread of bluetooth >>
+note top of BluetoothRunner
+    This is the thread that listen all comming
+    information from bluethooth connection. 
+end note
+class PositionRunner << listener thread of magnetic field phone senssor >>
+note top of PositionRunner
+    This is the thread that listen all comming
+    information from magnetic earth phone sensor. 
+end note
+class SendDataRunner << thread to control other threads >>
+{
+     __  data __
+    Thread BluetoothThread
+    Thread PositionThread
+    Thread WifiSendDataRunner
+}
+note top of SendDataRunner
+    This thread centralize all the information 
+    comming from BluetoothRunner and PositionRunner.
+    After that it sends all this infomartion to 
+    WifiSendDataRunner, if the Tcp connection is 
+    aviable.
+end note
+class WifiSendDataRunner << thread to send information to tcp >>
+note top of WifiSendDataRunner
+    This thread send the incomming information 
+    to the tcp connection. 
+end note
+
+MainActivity *-- AppCompatActivity
+WifiActivity *-- AppCompatActivity
+BluetoothActivity *-- AppCompatActivity
+BluetoothRunner *-- Runnable
+PositionRunner *-- Runnable
+SendDataRunner *-- Runnable
+WifiSendDataRunner *-- Runnable
+
+SendDataRunner "1" o-- BluetoothRunner
+SendDataRunner "1" o-- PositionRunner
+SendDataRunner "1" o-- WifiSendDataRunner
+@enduml

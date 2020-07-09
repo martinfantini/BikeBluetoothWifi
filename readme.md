@@ -81,7 +81,7 @@ This starts from the aplication.
 
 In the file: PositionRunner.java
 
-[PositionRunner.java](#https://github.com/martinfantini/BikeBluetoothWifi/blob/timer_to_send/app/src/main/java/com/example/bikebluetoothwifi/thread/PositionRunner.java)
+[PositionRunner.java](https://github.com/martinfantini/BikeBluetoothWifi/blob/timer_to_send/app/src/main/java/com/example/bikebluetoothwifi/thread/PositionRunner.java)
 
 there is a variable definied with
 
@@ -92,7 +92,7 @@ In this case this time is in microSeconds.
 
 When this data comes to the file: SendDataRunner.java
 
-[SendDataRunner.java](#https://github.com/martinfantini/BikeBluetoothWifi/blob/timer_to_send/app/src/main/java/com/example/bikebluetoothwifi/thread/SendDataRunner.java)
+[SendDataRunner.java](https://github.com/martinfantini/BikeBluetoothWifi/blob/timer_to_send/app/src/main/java/com/example/bikebluetoothwifi/thread/SendDataRunner.java)
 
 It is send with the same period diveded by the variable:
 
@@ -108,4 +108,4 @@ This means that, the programer has not change this TWO values because they are d
 Why I did use Timer class?
 
 Because it affects all the timers inside the phone. Because the code i program for timer affects all the running threads.
-[Timer Android](#https://developer.android.com/reference/java/util/Timer)
+[Timer Android](https://developer.android.com/reference/java/util/Timer)

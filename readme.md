@@ -79,9 +79,7 @@ This starts from the aplication.
 
 ## Tricky Programing
 
-In the file: PositionRunner.java
-
-[PositionRunner.java](#https://github.com/martinfantini/BikeBluetoothWifi/blob/timer_to_send/app/src/main/java/com/example/bikebluetoothwifi/thread/PositionRunner.java)
+In the file: [PositionRunner.java](https://github.com/martinfantini/BikeBluetoothWifi/blob/timer_to_send/app/src/main/java/com/example/bikebluetoothwifi/thread/PositionRunner.java)
 
 there is a variable definied with
 
@@ -90,9 +88,7 @@ private static final int MOVEMENT_SENSOR_DELAY = 500;
 This varaible is used to define time period of samples of phone change position.
 In this case this time is in microSeconds.
 
-When this data comes to the file: SendDataRunner.java
-
-[SendDataRunner.java](#https://github.com/martinfantini/BikeBluetoothWifi/blob/timer_to_send/app/src/main/java/com/example/bikebluetoothwifi/thread/SendDataRunner.java)
+When this data comes to the file: [SendDataRunner.java](https://github.com/martinfantini/BikeBluetoothWifi/blob/timer_to_send/app/src/main/java/com/example/bikebluetoothwifi/thread/SendDataRunner.java)
 
 It is send with the same period diveded by the variable:
 
@@ -108,4 +104,4 @@ This means that, the programer has not change this TWO values because they are d
 Why I did use Timer class?
 
 Because it affects all the timers inside the phone. Because the code i program for timer affects all the running threads.
-[Timer Android](#https://developer.android.com/reference/java/util/Timer)
+[Timer Android](https://developer.android.com/reference/java/util/Timer)
